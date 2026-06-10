@@ -1,12 +1,13 @@
 import React from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
-import { colors, spacing } from '../theme';
+import { colors, hexToRgba, spacing } from '../theme';
 import { CrowdLevel } from '../types';
 
 interface HomeStatusBarProps {
   isOpen: boolean;
   hoursLabel: string;
   crowdLevel: CrowdLevel;
+  crowdLabel: string;
 }
 
 const CROWD_LEVEL_COLORS: Record<CrowdLevel, string> = {
@@ -15,7 +16,9 @@ const CROWD_LEVEL_COLORS: Record<CrowdLevel, string> = {
   busy: colors.crowdBusy,
 };
 
-export default function HomeStatusBar({ isOpen, hoursLabel, crowdLevel }: HomeStatusBarProps) {
+export default function HomeStatusBar({ isOpen, hoursLabel, crowdLevel, crowdLabel }: HomeStatusBarProps) {
+  const crowdColor = CROWD_LEVEL_COLORS[crowdLevel];
+
   return (
     <View style={styles.bar}>
       <Image
@@ -29,7 +32,15 @@ export default function HomeStatusBar({ isOpen, hoursLabel, crowdLevel }: HomeSt
           {isOpen ? '営業中' : '営業時間外'} {hoursLabel}
         </Text>
       </View>
-      <View style={[styles.crowdBadge, { backgroundColor: CROWD_LEVEL_COLORS[crowdLevel] }]} />
+      <View
+        style={[
+          styles.crowdBadge,
+          { backgroundColor: hexToRgba(crowdColor, 0.2), borderColor: hexToRgba(crowdColor, 0.6) },
+        ]}
+      >
+        <View style={[styles.crowdDot, { backgroundColor: crowdColor }]} />
+        <Text style={[styles.crowdLabel, { color: crowdColor }]}>{crowdLabel}</Text>
+      </View>
     </View>
   );
 }
@@ -65,8 +76,21 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   crowdBadge: {
-    width: 16,
-    height: 16,
-    borderRadius: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+    borderRadius: 12,
+    borderWidth: 1,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 3,
+  },
+  crowdDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+  },
+  crowdLabel: {
+    fontSize: 11,
+    fontWeight: '700',
   },
 });

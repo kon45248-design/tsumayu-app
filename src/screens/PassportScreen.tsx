@@ -19,10 +19,10 @@ interface Shortcut {
 }
 
 const SHORTCUTS: Shortcut[] = [
-  { key: 'places', icon: '♨️', label: '館内案内' },
-  { key: 'food', icon: '🍴', label: '食事メニュー' },
-  { key: 'perks', icon: '🏅', label: 'スタンプ' },
-  { key: 'perks', icon: '🎫', label: 'クーポン' },
+  { key: 'places', icon: '♨', label: '館内案内' },
+  { key: 'food', icon: '食', label: '食事メニュー' },
+  { key: 'perks', icon: '●', label: 'スタンプ' },
+  { key: 'perks', icon: '券', label: 'クーポン' },
 ];
 
 export default function PassportScreen({ onNavigate }: PassportScreenProps) {
@@ -32,6 +32,7 @@ export default function PassportScreen({ onNavigate }: PassportScreenProps) {
         isOpen={facilityStatus.isOpen}
         hoursLabel="22:00まで"
         crowdLevel={facilityStatus.crowdLevel}
+        crowdLabel={facilityStatus.crowdLabel}
       />
       <ScrollView
         style={styles.scroll}
@@ -39,11 +40,15 @@ export default function PassportScreen({ onNavigate }: PassportScreenProps) {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.content}>
-          <MemberCompact member={member} />
+          <View style={styles.section}>
+            <MemberCompact member={member} />
+          </View>
 
-          <CrowdCard details={crowdDetails} />
+          <View style={styles.section}>
+            <CrowdCard details={crowdDetails} />
+          </View>
 
-          <View style={styles.shortcutGrid}>
+          <View style={[styles.shortcutGrid, styles.section]}>
             {SHORTCUTS.map((item) => (
               <Pressable
                 key={`${item.key}-${item.label}`}
@@ -56,14 +61,16 @@ export default function PassportScreen({ onNavigate }: PassportScreenProps) {
             ))}
           </View>
 
-          <HeroImage
-            source={require('../../assets/photos/onsen-openair.jpg')}
-            height={160}
-            overlayColor="rgba(10,20,40,0.40)"
-            title="太古の湯へ、今日。"
-            titleSize={20}
-            borderRadius={radius}
-          />
+          <View style={styles.heroSection}>
+            <HeroImage
+              source={require('../../assets/photos/onsen-openair.jpg')}
+              height={160}
+              overlayColor="rgba(10,20,40,0.40)"
+              title="太古の湯へ、今日。"
+              titleSize={20}
+              borderRadius={radius}
+            />
+          </View>
 
           <Pressable style={styles.registerLinkRow} onPress={() => onNavigate('register')}>
             <Text style={styles.registerLinkText}>
@@ -90,7 +97,12 @@ const styles = StyleSheet.create({
   content: {
     padding: spacing.lg,
     paddingBottom: spacing.xl * 2,
-    gap: spacing.md,
+  },
+  section: {
+    marginBottom: spacing.md,
+  },
+  heroSection: {
+    marginBottom: 8,
   },
   shortcutGrid: {
     flexDirection: 'row',
@@ -111,7 +123,9 @@ const styles = StyleSheet.create({
     borderRadius: radius,
   },
   shortcutIcon: {
-    fontSize: 22,
+    fontSize: 20,
+    color: colors.accent,
+    fontWeight: '700',
   },
   shortcutLabel: {
     color: colors.text,
@@ -120,7 +134,7 @@ const styles = StyleSheet.create({
   },
   registerLinkRow: {
     alignItems: 'center',
-    paddingVertical: spacing.sm,
+    paddingVertical: 8,
   },
   registerLinkText: {
     color: colors.textMuted,

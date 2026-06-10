@@ -10,7 +10,7 @@ export const colors = {
   warning: '#f2c94c',
   danger: '#eb5757',
   crowdFree: '#6fcf97',
-  crowdMedium: '#f2994a',
+  crowdMedium: '#fb923c',
   crowdBusy: '#eb5757',
   navBackground: '#0d1d33',
   statusBarBackground: '#0d1f3c',
@@ -25,3 +25,11 @@ export const spacing = {
   lg: 16,
   xl: 24,
 } as const;
+
+export function hexToRgba(hex: string, alpha: number): string {
+  const value = hex.replace('#', '');
+  const r = parseInt(value.substring(0, 2), 16);
+  const g = parseInt(value.substring(2, 4), 16);
+  const b = parseInt(value.substring(4, 6), 16);
+  return `rgba(${r},${g},${b},${alpha})`;
+}
