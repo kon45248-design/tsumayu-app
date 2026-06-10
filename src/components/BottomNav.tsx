@@ -13,7 +13,7 @@ const NAV_ITEMS: NavItem[] = [
   { key: 'passport', label: 'ホーム', icon: '🏠' },
   { key: 'places', label: '館内', icon: '♨️' },
   { key: 'food', label: '食事', icon: '🍴' },
-  { key: 'perks', label: '特典', icon: '🎁' },
+  { key: 'perks', label: 'スタンプ', icon: '🎁' },
   { key: 'account', label: 'マイ', icon: '👤' },
 ];
 

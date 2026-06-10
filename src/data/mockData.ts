@@ -1,5 +1,6 @@
 import {
   Coupon,
+  CrowdDetail,
   FacilitySpot,
   Member,
   MenuItem,
@@ -80,10 +81,10 @@ export const facilityStatus = {
   notice: '本日は浴室清掃のため15:00〜15:30は一部設備を休止します。',
 };
 
-export const crowdDetails = [
-  { area: '温泉', status: 'やや混雑' },
-  { area: 'サウナ', status: '空き' },
-  { area: '駐車場', status: '普通' },
+export const crowdDetails: CrowdDetail[] = [
+  { area: '温泉', status: 'やや混雑', level: 'medium' },
+  { area: 'サウナ', status: '空き', level: 'free' },
+  { area: '駐車場', status: '普通', level: 'free' },
 ];
 
 export const places: FacilitySpot[] = [

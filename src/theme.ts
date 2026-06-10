@@ -9,7 +9,11 @@ export const colors = {
   success: '#6fcf97',
   warning: '#f2c94c',
   danger: '#eb5757',
+  crowdFree: '#6fcf97',
+  crowdMedium: '#f2994a',
+  crowdBusy: '#eb5757',
   navBackground: '#0d1d33',
+  statusBarBackground: '#0d1f3c',
 } as const;
 
 export const radius = 12;

@@ -2,10 +2,11 @@ import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Badge from '../components/Badge';
 import Card from '../components/Card';
-import MemberCard from '../components/MemberCard';
+import MemberCompact from '../components/MemberCompact';
 import ScreenContainer from '../components/ScreenContainer';
 import SectionTitle from '../components/SectionTitle';
-import { member, visitHistory } from '../data/mockData';
+import StampGrid from '../components/StampGrid';
+import { coupons, member, stampProgress, visitHistory } from '../data/mockData';
 import { colors, spacing } from '../theme';
 
 const SETTINGS_ITEMS = [
@@ -16,9 +17,45 @@ const SETTINGS_ITEMS = [
 ];
 
 export default function AccountScreen() {
+  const unusedCoupons = coupons.filter((c) => !c.used);
+
   return (
-    <ScreenContainer title="マイページ" subtitle="デジタル会員証・来館履歴">
-      <MemberCard member={member} />
+    <ScreenContainer title="マイページ" subtitle="会員証・スタンプ・来館履歴">
+      <MemberCompact member={member} />
+
+      <Card>
+        <View style={styles.cardHeader}>
+          <SectionTitle title="スタンプカード" style={styles.sectionTitle} />
+          <Text style={styles.progressText}>
+            {stampProgress.current} / {stampProgress.setSize}
+          </Text>
+        </View>
+        <StampGrid current={stampProgress.current} setSize={stampProgress.setSize} />
+        <Text style={styles.helperText}>
+          スタンプ{stampProgress.setSize}個でお食事1000円クーポンを1枚進呈します。
+          {stampProgress.completedSets > 0
+            ? `（これまでに${stampProgress.completedSets}セット達成済み）`
+            : ''}
+        </Text>
+      </Card>
+
+      <Card>
+        <SectionTitle title="未使用クーポン一覧" style={styles.sectionTitle} />
+        {unusedCoupons.length === 0 ? (
+          <Text style={styles.helperText}>現在ご利用いただけるクーポンはありません。</Text>
+        ) : (
+          unusedCoupons.map((coupon) => (
+            <View key={coupon.id} style={styles.couponItem}>
+              <View style={styles.couponHeader}>
+                <Text style={styles.couponTitle}>{coupon.title}</Text>
+                <Badge label="未使用" variant="success" />
+              </View>
+              <Text style={styles.couponDescription}>{coupon.description}</Text>
+              <Text style={styles.couponDate}>獲得日：{coupon.obtainedDate}</Text>
+            </View>
+          ))
+        )}
+      </Card>
 
       <Card>
         <SectionTitle title="来館履歴" style={styles.sectionTitle} />
@@ -58,6 +95,48 @@ export default function AccountScreen() {
 const styles = StyleSheet.create({
   sectionTitle: {
     marginBottom: spacing.sm,
+  },
+  cardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: spacing.sm,
+  },
+  progressText: {
+    color: colors.accent,
+    fontSize: 16,
+    fontWeight: '700',
+  },
+  helperText: {
+    color: colors.textMuted,
+    fontSize: 12,
+    lineHeight: 18,
+    marginTop: spacing.md,
+  },
+  couponItem: {
+    marginTop: spacing.sm,
+    paddingTop: spacing.sm,
+  },
+  couponHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  couponTitle: {
+    color: colors.text,
+    fontSize: 14,
+    fontWeight: '700',
+  },
+  couponDescription: {
+    color: colors.textMuted,
+    fontSize: 12,
+    marginTop: spacing.xs,
+    lineHeight: 17,
+  },
+  couponDate: {
+    color: colors.textFaint,
+    fontSize: 11,
+    marginTop: spacing.xs,
   },
   historyRow: {
     flexDirection: 'row',

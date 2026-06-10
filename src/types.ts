@@ -4,6 +4,14 @@ export type MemberType = 'saito' | 'general' | 'student';
 
 export type ApprovalStatus = 'active' | 'pending';
 
+export type CrowdLevel = 'free' | 'medium' | 'busy';
+
+export interface CrowdDetail {
+  area: string;
+  status: string;
+  level: CrowdLevel;
+}
+
 export interface Member {
   name: string;
   memberNumber: string;
