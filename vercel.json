@@ -1,0 +1,6 @@
+{
+  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }],
+  "buildCommand": "npx expo export --platform web --output-dir dist --clear",
+  "outputDirectory": "dist",
+  "framework": null
+}
