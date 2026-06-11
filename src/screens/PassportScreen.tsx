@@ -19,9 +19,9 @@ interface Shortcut {
 }
 
 const SHORTCUTS: Shortcut[] = [
-  { key: 'places', icon: '♨', label: '館内案内' },
+  { key: 'places', icon: '湯', label: '館内案内' },
   { key: 'food', icon: '食', label: '食事メニュー' },
-  { key: 'perks', icon: '●', label: 'スタンプ' },
+  { key: 'perks', icon: '印', label: 'スタンプ' },
   { key: 'perks', icon: '券', label: 'クーポン' },
 ];
 
@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
     borderRadius: radius,
   },
   shortcutIcon: {
-    fontSize: 20,
+    fontSize: 18,
     color: colors.accent,
     fontWeight: '700',
   },

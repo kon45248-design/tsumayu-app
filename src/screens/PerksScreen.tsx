@@ -13,7 +13,7 @@ export default function PerksScreen() {
   const usedCoupons = coupons.filter((c) => c.used);
 
   return (
-    <ScreenContainer title="特典" subtitle="スタンプ・クーポン">
+    <ScreenContainer title="スタンプ・クーポン">
       <Card>
         <View style={styles.cardHeader}>
           <SectionTitle title="スタンプカード" />
