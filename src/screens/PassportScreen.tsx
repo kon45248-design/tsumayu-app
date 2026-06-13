@@ -4,12 +4,13 @@ import CrowdCard from '../components/CrowdCard';
 import HeroImage from '../components/HeroImage';
 import HomeStatusBar from '../components/HomeStatusBar';
 import MemberCompact from '../components/MemberCompact';
-import { crowdDetails, facilityStatus, member } from '../data/mockData';
+import { crowdDetails, facilityStatus, member as mockMember } from '../data/mockData';
 import { colors, radius, spacing } from '../theme';
-import { ScreenKey } from '../types';
+import { Member, ScreenKey } from '../types';
 
 interface PassportScreenProps {
   onNavigate: (key: ScreenKey) => void;
+  member?: Member;
 }
 
 interface Shortcut {
@@ -25,7 +26,7 @@ const SHORTCUTS: Shortcut[] = [
   { key: 'perks', icon: '券', label: 'クーポン' },
 ];
 
-export default function PassportScreen({ onNavigate }: PassportScreenProps) {
+export default function PassportScreen({ onNavigate, member }: PassportScreenProps) {
   return (
     <View style={styles.container}>
       <HomeStatusBar
@@ -41,7 +42,7 @@ export default function PassportScreen({ onNavigate }: PassportScreenProps) {
       >
         <View style={styles.content}>
           <View style={styles.section}>
-            <MemberCompact member={member} />
+            <MemberCompact member={member ?? mockMember} />
           </View>
 
           <View style={styles.section}>

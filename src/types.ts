@@ -1,4 +1,4 @@
-export type ScreenKey = 'passport' | 'places' | 'food' | 'perks' | 'account' | 'register';
+export type ScreenKey = 'passport' | 'places' | 'food' | 'perks' | 'account' | 'register' | 'login';
 
 export type MemberType = 'saito' | 'general' | 'student';
 

@@ -6,22 +6,27 @@ import MemberCompact from '../components/MemberCompact';
 import ScreenContainer from '../components/ScreenContainer';
 import SectionTitle from '../components/SectionTitle';
 import StampGrid from '../components/StampGrid';
-import { coupons, member, stampProgress, visitHistory } from '../data/mockData';
+import { coupons, member as mockMember, stampProgress, visitHistory } from '../data/mockData';
 import { colors, spacing } from '../theme';
+import { Member } from '../types';
 
 const SETTINGS_ITEMS = [
   { id: 's1', icon: '🔔', label: '通知設定' },
   { id: 's2', icon: '✏️', label: '会員情報の変更' },
   { id: 's3', icon: '❓', label: 'ヘルプ・お問い合わせ' },
-  { id: 's4', icon: '🚪', label: 'ログアウト' },
 ];
 
-export default function AccountScreen() {
+interface AccountScreenProps {
+  member?: Member;
+  onSignOut: () => void;
+}
+
+export default function AccountScreen({ member, onSignOut }: AccountScreenProps) {
   const unusedCoupons = coupons.filter((c) => !c.used);
 
   return (
     <ScreenContainer title="マイページ" subtitle="会員証・スタンプ・来館履歴">
-      <MemberCompact member={member} />
+      <MemberCompact member={member ?? mockMember} />
 
       <Card>
         <View style={styles.cardHeader}>
@@ -87,6 +92,11 @@ export default function AccountScreen() {
             <Text style={styles.settingArrow}>›</Text>
           </Pressable>
         ))}
+        <Pressable style={styles.settingRow} onPress={onSignOut}>
+          <Text style={styles.settingIcon}>🚪</Text>
+          <Text style={styles.settingLabel}>ログアウト</Text>
+          <Text style={styles.settingArrow}>›</Text>
+        </Pressable>
       </Card>
     </ScreenContainer>
   );

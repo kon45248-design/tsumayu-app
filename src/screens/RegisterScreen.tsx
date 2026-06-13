@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import Badge from '../components/Badge';
 import Card from '../components/Card';
 import ScreenContainer from '../components/ScreenContainer';
 import SectionTitle from '../components/SectionTitle';
+import { signUp } from '../lib/auth';
 import { colors, radius, spacing } from '../theme';
 import { MEMBER_TYPE_LABELS, MemberType, ScreenKey } from '../types';
 
@@ -45,10 +46,29 @@ export default function RegisterScreen({ onNavigate }: RegisterScreenProps) {
   const [step, setStep] = useState<Step>(1);
   const [selectedType, setSelectedType] = useState<MemberType | null>(null);
   const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const selectedOption = MEMBER_TYPE_OPTIONS.find((option) => option.type === selectedType) ?? null;
   const canProceedStep1 = selectedType !== null;
-  const canProceedStep2 = name.trim().length > 0;
+  const canProceedStep2 = name.trim().length > 0 && email.trim().length > 0 && password.length > 0;
+
+  const handleRegister = async () => {
+    if (!selectedOption) {
+      return;
+    }
+    setErrorMessage(null);
+    setLoading(true);
+    const { error } = await signUp(email.trim(), password, name.trim(), selectedOption.type);
+    setLoading(false);
+    if (error) {
+      setErrorMessage(error);
+      return;
+    }
+    setStep(4);
+  };
 
   return (
     <ScreenContainer title="会員登録" subtitle={`ステップ ${Math.min(step, 3)} / 3`}>
@@ -87,7 +107,7 @@ export default function RegisterScreen({ onNavigate }: RegisterScreenProps) {
 
       {step === 2 ? (
         <>
-          <SectionTitle title="お名前を入力" />
+          <SectionTitle title="お名前・ログイン情報を入力" />
           <Card>
             <Text style={styles.inputLabel}>お名前</Text>
             <TextInput
@@ -96,6 +116,25 @@ export default function RegisterScreen({ onNavigate }: RegisterScreenProps) {
               onChangeText={setName}
               placeholder="例：宮崎 花子"
               placeholderTextColor={colors.textFaint}
+            />
+            <Text style={[styles.inputLabel, styles.inputLabelSpaced]}>メールアドレス</Text>
+            <TextInput
+              style={styles.input}
+              value={email}
+              onChangeText={setEmail}
+              placeholder="例：sakura@example.com"
+              placeholderTextColor={colors.textFaint}
+              autoCapitalize="none"
+              keyboardType="email-address"
+            />
+            <Text style={[styles.inputLabel, styles.inputLabelSpaced]}>パスワード</Text>
+            <TextInput
+              style={styles.input}
+              value={password}
+              onChangeText={setPassword}
+              placeholder="8文字以上のパスワード"
+              placeholderTextColor={colors.textFaint}
+              secureTextEntry
             />
           </Card>
           <View style={styles.buttonRow}>
@@ -141,12 +180,25 @@ export default function RegisterScreen({ onNavigate }: RegisterScreenProps) {
                 : `${selectedOption.note}承認されるまでは会員証に「確認待ち」と表示されます。`}
             </Text>
           </Card>
+          {errorMessage ? (
+            <Card style={styles.errorCard}>
+              <Text style={styles.errorText}>{errorMessage}</Text>
+            </Card>
+          ) : null}
           <View style={styles.buttonRow}>
-            <Pressable style={styles.secondaryButton} onPress={() => setStep(2)}>
+            <Pressable style={styles.secondaryButton} onPress={() => setStep(2)} disabled={loading}>
               <Text style={styles.secondaryButtonText}>戻る</Text>
             </Pressable>
-            <Pressable style={[styles.primaryButton, styles.flexButton]} onPress={() => setStep(4)}>
-              <Text style={styles.primaryButtonText}>登録する</Text>
+            <Pressable
+              style={[styles.primaryButton, styles.flexButton, loading && styles.primaryButtonDisabled]}
+              onPress={handleRegister}
+              disabled={loading}
+            >
+              {loading ? (
+                <ActivityIndicator color={colors.background} />
+              ) : (
+                <Text style={styles.primaryButtonText}>登録する</Text>
+              )}
             </Pressable>
           </View>
         </>
@@ -252,6 +304,18 @@ const styles = StyleSheet.create({
     color: colors.textMuted,
     fontSize: 12,
     marginBottom: spacing.sm,
+  },
+  inputLabelSpaced: {
+    marginTop: spacing.md,
+  },
+  errorCard: {
+    backgroundColor: 'rgba(235,87,87,0.10)',
+    borderColor: colors.danger,
+  },
+  errorText: {
+    color: colors.danger,
+    fontSize: 12,
+    lineHeight: 18,
   },
   input: {
     backgroundColor: 'rgba(255,255,255,0.05)',
