@@ -41,7 +41,7 @@ export async function signUp(
     id: userId,
     name,
     member_number: generateMemberNumber(),
-    type: memberType,
+    member_type: memberType,
     status,
     bath_fee: BATH_FEE_BY_TYPE[memberType],
   });
@@ -72,7 +72,7 @@ export async function getCurrentMember(): Promise<Member | null> {
 
   const { data, error } = await supabase
     .from('members')
-    .select('name, member_number, type, status, bath_fee')
+    .select('name, member_number, member_type, status, bath_fee')
     .eq('id', userId)
     .single();
 
@@ -83,7 +83,7 @@ export async function getCurrentMember(): Promise<Member | null> {
   return {
     name: data.name,
     memberNumber: data.member_number,
-    type: data.type,
+    type: data.member_type,
     status: data.status,
     bathFee: data.bath_fee,
   };
