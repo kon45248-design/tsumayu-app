@@ -38,7 +38,7 @@ export async function signUp(
   const status: ApprovalStatus = memberType === 'general' ? 'active' : 'pending';
 
   const { error: insertError } = await supabase.from('members').insert({
-    id: userId,
+    user_id: userId,
     name,
     member_number: generateMemberNumber(),
     member_type: memberType,
@@ -73,7 +73,7 @@ export async function getCurrentMember(): Promise<Member | null> {
   const { data, error } = await supabase
     .from('members')
     .select('name, member_number, member_type, status, bath_fee')
-    .eq('id', userId)
+    .eq('user_id', userId)
     .single();
 
   if (error || !data) {
