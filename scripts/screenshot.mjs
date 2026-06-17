@@ -7,7 +7,6 @@ const outDir = path.resolve(process.argv[2] ?? 'docs/reports/phase-01-foundation
 fs.mkdirSync(outDir, { recursive: true });
 
 const screens = [
-  { key: 'login', file: 'expo-login.png' },
   { key: 'passport', file: 'expo-passport.png' },
   { key: 'places', file: 'expo-places.png' },
   { key: 'food', file: 'expo-food.png' },

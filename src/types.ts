@@ -13,6 +13,7 @@ export interface CrowdDetail {
 }
 
 export interface Member {
+  id: string;
   name: string;
   memberNumber: string;
   type: MemberType;

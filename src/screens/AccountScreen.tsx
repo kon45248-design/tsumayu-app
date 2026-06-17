@@ -6,9 +6,14 @@ import MemberCompact from '../components/MemberCompact';
 import ScreenContainer from '../components/ScreenContainer';
 import SectionTitle from '../components/SectionTitle';
 import StampGrid from '../components/StampGrid';
-import { coupons, member as mockMember, stampProgress, visitHistory } from '../data/mockData';
+import {
+  coupons as mockCoupons,
+  member as mockMember,
+  stampProgress as mockStampProgress,
+  visitHistory as mockVisitHistory,
+} from '../data/mockData';
 import { colors, spacing } from '../theme';
-import { Member } from '../types';
+import { Coupon, Member, StampProgress, VisitRecord } from '../types';
 
 const SETTINGS_ITEMS = [
   { id: 's1', icon: '🔔', label: '通知設定' },
@@ -18,10 +23,22 @@ const SETTINGS_ITEMS = [
 
 interface AccountScreenProps {
   member?: Member;
+  stampProgress?: StampProgress;
+  coupons?: Coupon[];
+  visitHistory?: VisitRecord[];
   onSignOut: () => void;
 }
 
-export default function AccountScreen({ member, onSignOut }: AccountScreenProps) {
+export default function AccountScreen({
+  member,
+  stampProgress: stampProgressProp,
+  coupons: couponsProp,
+  visitHistory: visitHistoryProp,
+  onSignOut,
+}: AccountScreenProps) {
+  const stampProgress = stampProgressProp ?? mockStampProgress;
+  const coupons = couponsProp ?? mockCoupons;
+  const visitHistory = visitHistoryProp ?? mockVisitHistory;
   const unusedCoupons = coupons.filter((c) => !c.used);
 
   return (

@@ -3,8 +3,15 @@ import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
 import { Platform, SafeAreaView, StyleSheet, View } from 'react-native';
 import BottomNav from './src/components/BottomNav';
-import { member as mockMember } from './src/data/mockData';
+import {
+  coupons as mockCoupons,
+  member as mockMember,
+  stampProgress as mockStampProgress,
+  visitHistory as mockVisitHistory,
+} from './src/data/mockData';
 import { getCurrentMember, signOut } from './src/lib/auth';
+import { getCoupons } from './src/lib/coupons';
+import { getStampProgress, getVisitHistory } from './src/lib/stamps';
 import { supabase } from './src/lib/supabase';
 import AccountScreen from './src/screens/AccountScreen';
 import FoodScreen from './src/screens/FoodScreen';
@@ -14,7 +21,7 @@ import PerksScreen from './src/screens/PerksScreen';
 import PlacesScreen from './src/screens/PlacesScreen';
 import RegisterScreen from './src/screens/RegisterScreen';
 import { colors } from './src/theme';
-import { Member, ScreenKey } from './src/types';
+import { Coupon, Member, ScreenKey, StampProgress, VisitRecord } from './src/types';
 
 const VALID_SCREENS: ScreenKey[] = ['passport', 'places', 'food', 'perks', 'account', 'register', 'login'];
 
@@ -33,6 +40,9 @@ export default function App() {
   const [screen, setScreen] = useState<ScreenKey>(getInitialScreen);
   const [session, setSession] = useState<Session | null | undefined>(undefined);
   const [member, setMember] = useState<Member>(mockMember);
+  const [stampProgress, setStampProgress] = useState<StampProgress>(mockStampProgress);
+  const [coupons, setCoupons] = useState<Coupon[]>(mockCoupons);
+  const [visitHistory, setVisitHistory] = useState<VisitRecord[]>(mockVisitHistory);
 
   const navigateTo = (key: ScreenKey) => {
     setScreen(key);
@@ -43,27 +53,50 @@ export default function App() {
     }
   };
 
+  const resetToMockData = () => {
+    setMember(mockMember);
+    setStampProgress(mockStampProgress);
+    setCoupons(mockCoupons);
+    setVisitHistory(mockVisitHistory);
+  };
+
+  const loadMemberData = async () => {
+    const fetchedMember = await getCurrentMember();
+    if (!fetchedMember) {
+      resetToMockData();
+      return;
+    }
+    setMember(fetchedMember);
+
+    const [fetchedStamps, fetchedCoupons, fetchedVisits] = await Promise.all([
+      getStampProgress(fetchedMember.id),
+      getCoupons(fetchedMember.id),
+      getVisitHistory(fetchedMember.id),
+    ]);
+    setStampProgress(fetchedStamps ?? mockStampProgress);
+    setCoupons(fetchedCoupons ?? mockCoupons);
+    setVisitHistory(fetchedVisits ?? mockVisitHistory);
+  };
+
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
       setSession(data.session);
+      if (data.session) {
+        loadMemberData();
+      }
     });
     const { data: listener } = supabase.auth.onAuthStateChange((_event, newSession) => {
       setSession(newSession);
+      if (newSession) {
+        loadMemberData();
+      } else {
+        resetToMockData();
+      }
     });
     return () => {
       listener.subscription.unsubscribe();
     };
   }, []);
-
-  useEffect(() => {
-    if (!session) {
-      setMember(mockMember);
-      return;
-    }
-    getCurrentMember().then((fetched) => {
-      setMember(fetched ?? mockMember);
-    });
-  }, [session]);
 
   useEffect(() => {
     if (session === undefined) {
@@ -98,12 +131,20 @@ export default function App() {
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.content}>
         {screen === 'login' && <LoginScreen onNavigate={navigateTo} />}
-        {screen === 'register' && <RegisterScreen onNavigate={navigateTo} />}
+        {screen === 'register' && <RegisterScreen onNavigate={navigateTo} onMemberRefresh={loadMemberData} />}
         {screen === 'passport' && <PassportScreen onNavigate={navigateTo} member={member} />}
         {screen === 'places' && <PlacesScreen />}
         {screen === 'food' && <FoodScreen />}
-        {screen === 'perks' && <PerksScreen />}
-        {screen === 'account' && <AccountScreen member={member} onSignOut={handleSignOut} />}
+        {screen === 'perks' && <PerksScreen stampProgress={stampProgress} coupons={coupons} />}
+        {screen === 'account' && (
+          <AccountScreen
+            member={member}
+            stampProgress={stampProgress}
+            coupons={coupons}
+            visitHistory={visitHistory}
+            onSignOut={handleSignOut}
+          />
+        )}
       </View>
       {showBottomNav && <BottomNav active={screen} onChange={navigateTo} />}
       <StatusBar style="light" />

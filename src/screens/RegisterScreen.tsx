@@ -10,6 +10,7 @@ import { MEMBER_TYPE_LABELS, MemberType, ScreenKey } from '../types';
 
 interface RegisterScreenProps {
   onNavigate: (key: ScreenKey) => void;
+  onMemberRefresh?: () => Promise<void>;
 }
 
 interface MemberTypeOption {
@@ -42,7 +43,7 @@ const MEMBER_TYPE_OPTIONS: MemberTypeOption[] = [
 
 type Step = 1 | 2 | 3 | 4;
 
-export default function RegisterScreen({ onNavigate }: RegisterScreenProps) {
+export default function RegisterScreen({ onNavigate, onMemberRefresh }: RegisterScreenProps) {
   const [step, setStep] = useState<Step>(1);
   const [selectedType, setSelectedType] = useState<MemberType | null>(null);
   const [name, setName] = useState('');
@@ -67,6 +68,7 @@ export default function RegisterScreen({ onNavigate }: RegisterScreenProps) {
       setErrorMessage(error);
       return;
     }
+    await onMemberRefresh?.();
     setStep(4);
   };
 
@@ -219,7 +221,7 @@ export default function RegisterScreen({ onNavigate }: RegisterScreenProps) {
                 : 'スタッフが確認後、承認されます。承認されるまでは会員証に「確認待ち」と表示されます。'}
             </Text>
           </Card>
-          <Pressable style={styles.primaryButton} onPress={() => onNavigate('account')}>
+          <Pressable style={styles.primaryButton} onPress={() => onNavigate('passport')}>
             <Text style={styles.primaryButtonText}>会員証を見る</Text>
           </Pressable>
         </>

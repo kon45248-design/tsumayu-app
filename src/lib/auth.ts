@@ -72,7 +72,7 @@ export async function getCurrentMember(): Promise<Member | null> {
 
   const { data, error } = await supabase
     .from('members')
-    .select('name, member_number, member_type, status, bath_fee')
+    .select('id, name, member_number, member_type, status, bath_fee')
     .eq('user_id', userId)
     .single();
 
@@ -81,6 +81,7 @@ export async function getCurrentMember(): Promise<Member | null> {
   }
 
   return {
+    id: data.id,
     name: data.name,
     memberNumber: data.member_number,
     type: data.member_type,

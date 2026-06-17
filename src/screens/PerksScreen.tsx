@@ -5,10 +5,25 @@ import Card from '../components/Card';
 import ScreenContainer from '../components/ScreenContainer';
 import SectionTitle from '../components/SectionTitle';
 import StampGrid from '../components/StampGrid';
-import { coupons, member, stampProgress } from '../data/mockData';
+import {
+  coupons as mockCoupons,
+  member,
+  stampProgress as mockStampProgress,
+} from '../data/mockData';
 import { colors, spacing } from '../theme';
+import { Coupon, StampProgress } from '../types';
 
-export default function PerksScreen() {
+interface PerksScreenProps {
+  stampProgress?: StampProgress;
+  coupons?: Coupon[];
+}
+
+export default function PerksScreen({
+  stampProgress: stampProgressProp,
+  coupons: couponsProp,
+}: PerksScreenProps) {
+  const stampProgress = stampProgressProp ?? mockStampProgress;
+  const coupons = couponsProp ?? mockCoupons;
   const unusedCoupons = coupons.filter((c) => !c.used);
   const usedCoupons = coupons.filter((c) => c.used);
 

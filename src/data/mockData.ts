@@ -9,6 +9,7 @@ import {
 } from '../types';
 
 export const member: Member = {
+  id: 'mock-member-00458',
   name: '黒木 さくら',
   memberNumber: 'TY-2026-00458',
   type: 'student',
