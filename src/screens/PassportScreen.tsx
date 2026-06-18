@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import CrowdCard from '../components/CrowdCard';
 import HeroImage from '../components/HeroImage';
 import HomeStatusBar from '../components/HomeStatusBar';
@@ -11,6 +11,7 @@ import { Member, ScreenKey } from '../types';
 interface PassportScreenProps {
   onNavigate: (key: ScreenKey) => void;
   member?: Member;
+  loading?: boolean;
 }
 
 interface Shortcut {
@@ -26,7 +27,7 @@ const SHORTCUTS: Shortcut[] = [
   { key: 'perks', icon: '券', label: 'クーポン' },
 ];
 
-export default function PassportScreen({ onNavigate, member }: PassportScreenProps) {
+export default function PassportScreen({ onNavigate, member, loading }: PassportScreenProps) {
   return (
     <View style={styles.container}>
       <HomeStatusBar
@@ -35,6 +36,11 @@ export default function PassportScreen({ onNavigate, member }: PassportScreenPro
         crowdLevel={facilityStatus.crowdLevel}
         crowdLabel={facilityStatus.crowdLabel}
       />
+      {loading ? (
+        <View style={styles.loadingRow}>
+          <ActivityIndicator size="small" color={colors.accent} />
+        </View>
+      ) : null}
       <ScrollView
         style={styles.scroll}
         contentContainerStyle={styles.scrollContent}
@@ -91,6 +97,10 @@ const styles = StyleSheet.create({
   },
   scroll: {
     flex: 1,
+  },
+  loadingRow: {
+    paddingVertical: spacing.xs,
+    alignItems: 'center',
   },
   scrollContent: {
     paddingTop: 0,

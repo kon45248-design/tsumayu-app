@@ -26,6 +26,7 @@ interface AccountScreenProps {
   stampProgress?: StampProgress;
   coupons?: Coupon[];
   visitHistory?: VisitRecord[];
+  loading?: boolean;
   onSignOut: () => void;
 }
 
@@ -34,6 +35,7 @@ export default function AccountScreen({
   stampProgress: stampProgressProp,
   coupons: couponsProp,
   visitHistory: visitHistoryProp,
+  loading,
   onSignOut,
 }: AccountScreenProps) {
   const stampProgress = stampProgressProp ?? mockStampProgress;
@@ -42,7 +44,7 @@ export default function AccountScreen({
   const unusedCoupons = coupons.filter((c) => !c.used);
 
   return (
-    <ScreenContainer title="マイページ" subtitle="会員証・スタンプ・来館履歴">
+    <ScreenContainer title="マイページ" subtitle="会員証・スタンプ・来館履歴" loading={loading}>
       <MemberCompact member={member ?? mockMember} />
 
       <Card>

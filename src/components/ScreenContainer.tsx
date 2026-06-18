@@ -1,21 +1,27 @@
 import React, { ReactNode } from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { colors, spacing } from '../theme';
 
 interface ScreenContainerProps {
   title?: string;
   subtitle?: string;
   hero?: ReactNode;
+  loading?: boolean;
   children: ReactNode;
 }
 
-export default function ScreenContainer({ title, subtitle, hero, children }: ScreenContainerProps) {
+export default function ScreenContainer({ title, subtitle, hero, loading, children }: ScreenContainerProps) {
   return (
     <ScrollView
       style={styles.scroll}
       contentContainerStyle={[styles.contentContainer, hero ? styles.contentNoPadding : null]}
       showsVerticalScrollIndicator={false}
     >
+      {loading ? (
+        <View style={styles.loadingRow}>
+          <ActivityIndicator size="small" color={colors.accent} />
+        </View>
+      ) : null}
       {hero}
       <View style={styles.content}>
         {title ? (
@@ -40,6 +46,10 @@ const styles = StyleSheet.create({
   },
   contentNoPadding: {
     paddingBottom: 0,
+  },
+  loadingRow: {
+    paddingVertical: spacing.xs,
+    alignItems: 'center',
   },
   content: {
     padding: spacing.lg,

@@ -43,6 +43,7 @@ export default function App() {
   const [stampProgress, setStampProgress] = useState<StampProgress>(mockStampProgress);
   const [coupons, setCoupons] = useState<Coupon[]>(mockCoupons);
   const [visitHistory, setVisitHistory] = useState<VisitRecord[]>(mockVisitHistory);
+  const [isLoadingMemberData, setIsLoadingMemberData] = useState(false);
 
   const navigateTo = (key: ScreenKey) => {
     setScreen(key);
@@ -61,21 +62,26 @@ export default function App() {
   };
 
   const loadMemberData = async () => {
-    const fetchedMember = await getCurrentMember();
-    if (!fetchedMember) {
-      resetToMockData();
-      return;
-    }
-    setMember(fetchedMember);
+    setIsLoadingMemberData(true);
+    try {
+      const fetchedMember = await getCurrentMember();
+      if (!fetchedMember) {
+        resetToMockData();
+        return;
+      }
+      setMember(fetchedMember);
 
-    const [fetchedStamps, fetchedCoupons, fetchedVisits] = await Promise.all([
-      getStampProgress(fetchedMember.id),
-      getCoupons(fetchedMember.id),
-      getVisitHistory(fetchedMember.id),
-    ]);
-    setStampProgress(fetchedStamps ?? mockStampProgress);
-    setCoupons(fetchedCoupons ?? mockCoupons);
-    setVisitHistory(fetchedVisits ?? mockVisitHistory);
+      const [fetchedStamps, fetchedCoupons, fetchedVisits] = await Promise.all([
+        getStampProgress(fetchedMember.id),
+        getCoupons(fetchedMember.id),
+        getVisitHistory(fetchedMember.id),
+      ]);
+      setStampProgress(fetchedStamps ?? mockStampProgress);
+      setCoupons(fetchedCoupons ?? mockCoupons);
+      setVisitHistory(fetchedVisits ?? mockVisitHistory);
+    } finally {
+      setIsLoadingMemberData(false);
+    }
   };
 
   useEffect(() => {
@@ -132,16 +138,26 @@ export default function App() {
       <View style={styles.content}>
         {screen === 'login' && <LoginScreen onNavigate={navigateTo} />}
         {screen === 'register' && <RegisterScreen onNavigate={navigateTo} onMemberRefresh={loadMemberData} />}
-        {screen === 'passport' && <PassportScreen onNavigate={navigateTo} member={member} />}
+        {screen === 'passport' && (
+          <PassportScreen onNavigate={navigateTo} member={member} loading={isLoadingMemberData} />
+        )}
         {screen === 'places' && <PlacesScreen />}
         {screen === 'food' && <FoodScreen />}
-        {screen === 'perks' && <PerksScreen stampProgress={stampProgress} coupons={coupons} />}
+        {screen === 'perks' && (
+          <PerksScreen
+            member={member}
+            stampProgress={stampProgress}
+            coupons={coupons}
+            loading={isLoadingMemberData}
+          />
+        )}
         {screen === 'account' && (
           <AccountScreen
             member={member}
             stampProgress={stampProgress}
             coupons={coupons}
             visitHistory={visitHistory}
+            loading={isLoadingMemberData}
             onSignOut={handleSignOut}
           />
         )}

@@ -7,28 +7,33 @@ import SectionTitle from '../components/SectionTitle';
 import StampGrid from '../components/StampGrid';
 import {
   coupons as mockCoupons,
-  member,
+  member as mockMember,
   stampProgress as mockStampProgress,
 } from '../data/mockData';
 import { colors, spacing } from '../theme';
-import { Coupon, StampProgress } from '../types';
+import { Coupon, Member, StampProgress } from '../types';
 
 interface PerksScreenProps {
+  member?: Member;
   stampProgress?: StampProgress;
   coupons?: Coupon[];
+  loading?: boolean;
 }
 
 export default function PerksScreen({
+  member: memberProp,
   stampProgress: stampProgressProp,
   coupons: couponsProp,
+  loading,
 }: PerksScreenProps) {
+  const member = memberProp ?? mockMember;
   const stampProgress = stampProgressProp ?? mockStampProgress;
   const coupons = couponsProp ?? mockCoupons;
   const unusedCoupons = coupons.filter((c) => !c.used);
   const usedCoupons = coupons.filter((c) => c.used);
 
   return (
-    <ScreenContainer title="スタンプ・クーポン">
+    <ScreenContainer title="スタンプ・クーポン" loading={loading}>
       <Card>
         <View style={styles.cardHeader}>
           <SectionTitle title="スタンプカード" />
